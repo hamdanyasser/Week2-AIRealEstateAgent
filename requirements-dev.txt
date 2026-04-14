@@ -1,0 +1,15 @@
+# Development-only dependencies — NOT installed in the production Docker image.
+# Install with: pip install -r requirements.txt -r requirements-dev.txt
+
+# Formatters / linters
+black==24.8.0
+isort==5.13.2
+
+# Tests
+pytest==8.3.3
+pytest-mock==3.14.0
+
+# Notebook
+jupyter==1.1.1
+matplotlib==3.9.2
+seaborn==0.13.2

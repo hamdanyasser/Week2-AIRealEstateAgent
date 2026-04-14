@@ -1,0 +1,28 @@
+# Runtime dependencies — pinned for reproducibility.
+# Regenerate with `pip freeze > requirements.txt` only after intentional upgrades.
+
+# Web framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# Data validation + settings
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# ML stack
+scikit-learn==1.5.2
+pandas==2.2.3
+numpy==2.1.1
+joblib==1.4.2
+
+# LLM client
+openai==1.51.0
+
+# Frontend
+streamlit==1.38.0
+
+# Env var loading (used indirectly by pydantic-settings)
+python-dotenv==1.0.1
+
+# HTTP client (used by streamlit → FastAPI)
+requests==2.32.3

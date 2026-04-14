@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+
+# Secrets (never copy into image)
+.env
+.env.*
+
+# Tests + dev tooling (not needed at runtime)
+tests/
+.pytest_cache/
+.coverage
+
+# Notebooks + raw data (training is offline, image only needs model artifact)
+notebooks/
+data/
+
+# Git + IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+.DS_Store
+
+# Docs
+README.md
+*.md
+
+# Prompt logs (dev-time artifact)
+prompt_logs/
