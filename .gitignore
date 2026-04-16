@@ -8,6 +8,8 @@ build/
 dist/
 *.egg-info/
 .eggs/
+!frontend/dist/
+!frontend/dist/**
 
 # Virtual environments
 .venv/
@@ -24,6 +26,8 @@ ENV/
 models/*.joblib
 models/*.pkl
 models/*.json
+!models/model.joblib
+!models/training_stats.json
 
 # Jupyter
 .ipynb_checkpoints/
@@ -43,3 +47,9 @@ htmlcov/
 
 # Logs
 *.log
+
+# Local pip wheel cache (91MB of binary wheels — reinstall from requirements.txt)
+wheels/
+
+# Node (belt-and-suspenders, frontend/.gitignore already handles this)
+node_modules/

@@ -7,7 +7,6 @@ isort==5.13.2
 
 # Tests
 pytest==8.3.3
-pytest-mock==3.14.0
 
 # Notebook
 jupyter==1.1.1

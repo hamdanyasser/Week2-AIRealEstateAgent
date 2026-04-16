@@ -1,0 +1,383 @@
+{
+  "benchmark_run_at": "2026-04-16T07:46:06.662114+00:00",
+  "n_cases": 5,
+  "total_fields_per_query": 12,
+  "runs": [
+    {
+      "timestamp": "2026-04-16T07:45:44.814214+00:00",
+      "prompt_version": "v1",
+      "query": "3 bedroom ranch in OldTown, 2-car garage, built 1960",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": true,
+      "elapsed_ms": 4082.6,
+      "expected": {
+        "BedroomAbvGr": 3,
+        "GarageCars": 2,
+        "YearBuilt": 1960,
+        "Neighborhood": "OldTown",
+        "HouseStyle": "1Story"
+      },
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 5,
+        "hallucinated": 0,
+        "accuracy": 0.583
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:45:47.768015+00:00",
+      "prompt_version": "v2",
+      "query": "3 bedroom ranch in OldTown, 2-car garage, built 1960",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": 3,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": 2,
+        "YearBuilt": 1960,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": "OldTown",
+        "HouseStyle": "1Story"
+      },
+      "validation_passed": true,
+      "all_null_fallback": false,
+      "elapsed_ms": 2952.4,
+      "expected": {
+        "BedroomAbvGr": 3,
+        "GarageCars": 2,
+        "YearBuilt": 1960,
+        "Neighborhood": "OldTown",
+        "HouseStyle": "1Story"
+      },
+      "score": {
+        "correct": 5,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:45:50.017275+00:00",
+      "prompt_version": "v1",
+      "query": "Large 2-story home in NridgHt, 4 beds 2.5 baths, excellent quality, 1800 sqft above grade, fireplace, built 2005",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": true,
+      "elapsed_ms": 2249.0,
+      "expected": {
+        "GrLivArea": 1800,
+        "BedroomAbvGr": 4,
+        "FullBath": 2,
+        "HalfBath": 1,
+        "Fireplaces": 1,
+        "YearBuilt": 2005,
+        "OverallQual": 9,
+        "Neighborhood": "NridgHt",
+        "HouseStyle": "2Story"
+      },
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 9,
+        "hallucinated": 0,
+        "accuracy": 0.25
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:45:54.440082+00:00",
+      "prompt_version": "v2",
+      "query": "Large 2-story home in NridgHt, 4 beds 2.5 baths, excellent quality, 1800 sqft above grade, fireplace, built 2005",
+      "extracted": {
+        "GrLivArea": 1800.0,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": 4,
+        "FullBath": 2,
+        "HalfBath": 1,
+        "GarageCars": null,
+        "YearBuilt": 2005,
+        "Fireplaces": 1,
+        "OverallQual": 9,
+        "OverallCond": null,
+        "Neighborhood": "NridgHt",
+        "HouseStyle": "2Story"
+      },
+      "validation_passed": true,
+      "all_null_fallback": false,
+      "elapsed_ms": 4422.7,
+      "expected": {
+        "GrLivArea": 1800,
+        "BedroomAbvGr": 4,
+        "FullBath": 2,
+        "HalfBath": 1,
+        "Fireplaces": 1,
+        "YearBuilt": 2005,
+        "OverallQual": 9,
+        "Neighborhood": "NridgHt",
+        "HouseStyle": "2Story"
+      },
+      "score": {
+        "correct": 9,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:45:56.522581+00:00",
+      "prompt_version": "v1",
+      "query": "Small older house, bad shape, 2 bedrooms, needs renovation",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": true,
+      "elapsed_ms": 2081.6,
+      "expected": {
+        "BedroomAbvGr": 2,
+        "OverallCond": 3
+      },
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 2,
+        "hallucinated": 0,
+        "accuracy": 0.833
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:45:58.576305+00:00",
+      "prompt_version": "v2",
+      "query": "Small older house, bad shape, 2 bedrooms, needs renovation",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": 2,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": 3,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": false,
+      "elapsed_ms": 2053.3,
+      "expected": {
+        "BedroomAbvGr": 2,
+        "OverallCond": 3
+      },
+      "score": {
+        "correct": 2,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:46:01.233207+00:00",
+      "prompt_version": "v1",
+      "query": "1.5 story in CollgCr, good quality, 3 bed 2 bath, 1 fireplace, built 1998",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": true,
+      "elapsed_ms": 2656.8,
+      "expected": {
+        "BedroomAbvGr": 3,
+        "FullBath": 2,
+        "Fireplaces": 1,
+        "OverallQual": 7,
+        "YearBuilt": 1998,
+        "Neighborhood": "CollgCr",
+        "HouseStyle": "1.5Fin"
+      },
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 7,
+        "hallucinated": 0,
+        "accuracy": 0.417
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:46:03.044129+00:00",
+      "prompt_version": "v2",
+      "query": "1.5 story in CollgCr, good quality, 3 bed 2 bath, 1 fireplace, built 1998",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": 3,
+        "FullBath": 2,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": 1998,
+        "Fireplaces": 1,
+        "OverallQual": 7,
+        "OverallCond": null,
+        "Neighborhood": "CollgCr",
+        "HouseStyle": "1.5Fin"
+      },
+      "validation_passed": true,
+      "all_null_fallback": false,
+      "elapsed_ms": 1810.6,
+      "expected": {
+        "BedroomAbvGr": 3,
+        "FullBath": 2,
+        "Fireplaces": 1,
+        "OverallQual": 7,
+        "YearBuilt": 1998,
+        "Neighborhood": "CollgCr",
+        "HouseStyle": "1.5Fin"
+      },
+      "score": {
+        "correct": 7,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:46:05.012572+00:00",
+      "prompt_version": "v1",
+      "query": "Big luxury home",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": null,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": true,
+      "elapsed_ms": 1968.6,
+      "expected": {},
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "accuracy": 1.0
+      }
+    },
+    {
+      "timestamp": "2026-04-16T07:46:06.662114+00:00",
+      "prompt_version": "v2",
+      "query": "Big luxury home",
+      "extracted": {
+        "GrLivArea": null,
+        "TotalBsmtSF": null,
+        "BedroomAbvGr": null,
+        "FullBath": null,
+        "HalfBath": null,
+        "GarageCars": null,
+        "YearBuilt": null,
+        "Fireplaces": null,
+        "OverallQual": 9,
+        "OverallCond": null,
+        "Neighborhood": null,
+        "HouseStyle": null
+      },
+      "validation_passed": true,
+      "all_null_fallback": false,
+      "elapsed_ms": 1649.7,
+      "expected": {},
+      "score": {
+        "correct": 0,
+        "incorrect": 0,
+        "missed": 0,
+        "hallucinated": 1,
+        "accuracy": 0.917
+      }
+    }
+  ],
+  "summary": {
+    "v1": {
+      "mean_accuracy": 0.617,
+      "total_correct": 0,
+      "total_incorrect": 0,
+      "total_missed": 23,
+      "total_hallucinated": 0,
+      "mean_elapsed_ms": 2607.7,
+      "fallback_count": 5
+    },
+    "v2": {
+      "mean_accuracy": 0.983,
+      "total_correct": 23,
+      "total_incorrect": 0,
+      "total_missed": 0,
+      "total_hallucinated": 1,
+      "mean_elapsed_ms": 2577.7,
+      "fallback_count": 0
+    }
+  },
+  "winner": "v2",
+  "winner_reason": "v2 wins on mean accuracy (0.983 vs 0.617); correct=23 vs 0, hallucinations=1 vs 0"
+}

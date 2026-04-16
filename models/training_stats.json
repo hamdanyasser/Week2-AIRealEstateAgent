@@ -1,0 +1,40 @@
+{
+  "avg_price_by_neighborhood": {
+    "Blmngtn": 191154.37,
+    "Blueste": 135914.29,
+    "BrDale": 106088.89,
+    "BrkSide": 125515.71,
+    "ClearCr": 212845.06,
+    "CollgCr": 205172.82,
+    "Crawfor": 209113.28,
+    "Edwards": 130905.55,
+    "Gilbert": 188594.43,
+    "Greens": 190642.86,
+    "IDOTRR": 101345.94,
+    "Landmrk": 137000.0,
+    "MeadowV": 96784.81,
+    "Mitchel": 164401.1,
+    "NAmes": 145877.38,
+    "NPkVill": 139421.88,
+    "NWAmes": 186474.49,
+    "NoRidge": 328993.16,
+    "NridgHt": 315272.88,
+    "OldTown": 125243.75,
+    "SWISU": 134737.39,
+    "Sawyer": 137137.89,
+    "SawyerW": 179658.86,
+    "Somerst": 225782.68,
+    "StoneBr": 327620.51,
+    "Timber": 244547.5,
+    "Veenker": 256763.33
+  },
+  "avg_sqft": 1495.487567040468,
+  "n_train_rows": 2051,
+  "price": {
+    "max": 755000.0,
+    "median": 160000.0,
+    "min": 12789.0,
+    "q1": 129000.0,
+    "q3": 212999.5
+  }
+}

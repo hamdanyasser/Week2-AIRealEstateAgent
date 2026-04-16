@@ -1,0 +1,32 @@
+# docker-compose.yml — run the full AI Real Estate Agent stack.
+#
+# Usage:
+#   docker compose up --build
+#
+# Prerequisites:
+#   A `.env` file in the project root with OPENAI_API_KEY set.
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy

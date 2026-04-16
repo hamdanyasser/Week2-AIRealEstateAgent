@@ -34,3 +34,10 @@ README.md
 
 # Prompt logs (dev-time artifact)
 prompt_logs/
+
+# Frontend (has its own Dockerfile, not needed in backend image)
+frontend/
+
+# Docker files themselves
+Dockerfile
+docker-compose.yml

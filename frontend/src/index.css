@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #F6F1E8;
+    color: #2F3A39;
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01';
+  }
+  ::selection {
+    background-color: #C27D5C;
+    color: #F6F1E8;
+  }
+  textarea:focus {
+    outline: none;
+  }
+}
+
+@layer utilities {
+  /* Subtle paper grain layered over the whole page via a fixed overlay */
+  .grain {
+    background-image: radial-gradient(#2F3A39 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+  /* Editorial rule — 1px brass-tinted hairline */
+  .hairline {
+    border-top: 1px solid #D8CCB8;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
