@@ -30,10 +30,12 @@ logger, never leaked in the HTTP response body.
 
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 from typing import AsyncIterator, Literal
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.chain.stage1 import extract_features
@@ -102,6 +104,20 @@ app = FastAPI(
     ),
     version="0.1.0",
     lifespan=lifespan,
+)
+
+# Cross-origin setup for deployed environments (e.g. Render static site
+# calling the backend web service). Local Docker + Vite dev proxy keep
+# requests same-origin, so this only activates in production.
+_allowed = os.environ.get("ALLOWED_ORIGINS", "*")
+_allowed_origins = (
+    ["*"] if _allowed.strip() == "*" else [o.strip() for o in _allowed.split(",") if o.strip()]
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allowed_origins,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 
 

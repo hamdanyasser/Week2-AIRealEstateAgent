@@ -1,0 +1,48 @@
+# Render Blueprint — deploys the AI Real Estate Agent as two free services:
+#   1. `ai-real-estate-api` : FastAPI backend (Python web service, free plan)
+#   2. `ai-real-estate-web` : React/Vite frontend (static site, free plan)
+#
+# Usage:
+#   - Push this repo to GitHub.
+#   - Render dashboard → New → Blueprint → select this repo → Apply.
+#   - After the first deploy, set these values in the Render dashboard:
+#       * backend  → OPENAI_API_KEY        (the real secret)
+#       * backend  → ALLOWED_ORIGINS       (https URL of the frontend)
+#       * frontend → VITE_API_URL          (https URL of the backend)
+#     Then trigger a redeploy of each service so the values take effect.
+
+services:
+  - type: web
+    name: ai-real-estate-api
+    runtime: python
+    plan: free
+    region: oregon
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: MODEL_NAME
+        value: gpt-4o-mini
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: ai-real-estate-web
+    runtime: static
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
