@@ -112,6 +112,11 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-canvas text-ink">
+      <div className="aurora fixed inset-0 z-0" aria-hidden>
+        <div className="aurora-orb aurora-a" />
+        <div className="aurora-orb aurora-b" />
+        <div className="aurora-orb aurora-c" />
+      </div>
       <div className="grain fixed inset-0 z-0" aria-hidden />
 
       <main className="relative z-10">
