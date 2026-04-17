@@ -17,13 +17,6 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-function getMissingKeys(features) {
-  if (!features) return []
-  return Object.entries(features)
-    .filter(([, value]) => value == null || value === '')
-    .map(([key]) => key)
-}
-
 // App is the single source of truth for the UI state machine:
 //   idle       -> hero + composer
 //   extracting -> Stage 1 thinking
@@ -42,7 +35,10 @@ export default function App() {
   const reviewRef = useRef(null)
   const resultsRef = useRef(null)
 
-  const reviewMissing = getMissingKeys(reviewedFeatures)
+  // Freeze the missing-field list at extract-time. If we re-derived it
+  // from `reviewedFeatures` on every render, typing a value would make
+  // the field non-missing and unmount its own input mid-edit.
+  const reviewMissing = extraction?.missing_features ?? []
 
   async function handleAnalyze(text) {
     setQuery(text)
