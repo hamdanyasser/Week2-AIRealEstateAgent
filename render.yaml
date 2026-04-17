@@ -35,7 +35,6 @@ services:
     name: ai-real-estate-web
     runtime: static
     plan: free
-    region: oregon
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
