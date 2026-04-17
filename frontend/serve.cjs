@@ -1,6 +1,6 @@
 // Lightweight production server for the React build.
 // Uses only Node built-in modules — no npm install needed.
-// Serves static files from ./dist and proxies /predict + /health
+// Serves static files from ./dist and proxies /extract, /predict, and /health
 // to the backend container (resolved via Docker Compose DNS).
 
 const http = require('http');
@@ -66,7 +66,11 @@ function serveStatic(req, res) {
 }
 
 http.createServer((req, res) => {
-  if (req.url.startsWith('/predict') || req.url.startsWith('/health')) {
+  if (
+    req.url.startsWith('/extract') ||
+    req.url.startsWith('/predict') ||
+    req.url.startsWith('/health')
+  ) {
     proxyToBackend(req, res);
   } else {
     serveStatic(req, res);

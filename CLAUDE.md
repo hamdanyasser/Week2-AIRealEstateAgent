@@ -152,6 +152,9 @@ Success criteria:
 - Step 10 completed
 - Step 11 completed
 - Step 12 completed (Docker verified locally: backend + frontend images build, `docker compose up --build -d` works, and the stack is reachable on `:8000` and `:3000`)
+- Step 13 completed (pytest suite: 10 passed, 0 failed — schemas, predictor, chain fallbacks, `/health` + `/extract` + `/predict`)
+- Step 14 completed (README + presentation deck + speaker notes + Q&A prep + publish checklist)
+- **Final submission state: repo is clean, committed, and safe to push.**
 - Real dataset added at data/train.csv
 - Trained model saved at models/model.joblib
 - Training stats saved at models/training_stats.json
@@ -264,5 +267,41 @@ Key design decisions (Step 12):
 - **No secrets in images.** `.env` is in both `.dockerignore` files. The API key is injected at runtime via `env_file: .env` in `docker-compose.yml`. The image itself has zero secrets.
 - **Healthcheck before frontend starts.** `depends_on: backend: condition: service_healthy` prevents the frontend container from accepting traffic before the backend's model is loaded. The backend's healthcheck calls `/health` with Python's `urllib` (no extra deps).
 
-Next step:
-- Step 13: Tests
+- Step 13 results:
+  - [tests/test_schemas.py](tests/test_schemas.py) — Pydantic contracts: `ExtractedFeatures` accepts partials, ignores stray LLM keys, rejects out-of-range values, and `missing_fields()` / `to_model_input()` helpers return the right alias keys. `PredictionResponse` and `ExtractionResponse` reject extra fields (`extra="forbid"`).
+  - [tests/test_predictor.py](tests/test_predictor.py) — `features_to_dataframe` produces the 12-column, alias-keyed shape the pipeline expects; `predict_price` returns a float for fully-populated, partially-populated, and fully-empty inputs (the imputer fills `NaN`s from training medians/modes).
+  - [tests/test_chain.py](tests/test_chain.py) — Stage 1 and Stage 2 with the OpenAI client mocked: happy path, malformed JSON → empty-features fallback, Pydantic validation failure → fallback, `openai.APIError` → fallback, empty-response in Stage 2 → deterministic stats-based string. Proves the pipeline never crashes on LLM failure.
+  - [tests/test_main.py](tests/test_main.py) — `/health`, `/extract` (completeness metadata shape), and `/predict` (happy path + reviewed-features bypass path, 422 on extra keys, 500 on unexpected errors with no stack-trace leak). Stages 1/2 are mocked so the suite runs without an API key.
+  - **Result:** `pytest -q` → 10 passed, 0 failed. Deliberate garbage-JSON demo lives in `test_chain.py::test_extract_features_malformed_json_returns_empty`.
+
+Key design decision (Step 13):
+- **Mocked LLM, real sklearn.** The tests patch `openai` at the client boundary but let the real joblib pipeline run. That means the ML half is tested with actual model I/O (catching joblib/feature-name drift), while the LLM half is tested for the behavior we care about — fallback paths — without spending tokens or depending on network. Defend in review as: *"Every LLM failure mode is exercised deterministically because the client is mocked; the model side is exercised for real because swapping in a fake would let broken feature shapes through."*
+
+- Step 14 results:
+  - [README.md](README.md) — architecture diagram, demo flow, project structure, compliance highlights, local + Docker run instructions, API route examples (including the `POST /extract` → review → `POST /predict` flow), and safety notes pointing at `PUBLISH_CHECKLIST.md`.
+  - [presentation_outline.md](presentation_outline.md), [presentation_speaker_notes.md](presentation_speaker_notes.md), [presentation_qa.md](presentation_qa.md) — Friday talking points: problem → architecture → demo → lessons, plus anticipated review questions with answers.
+  - [make_deck.py](make_deck.py) → [AI_Real_Estate_Agent.pptx](AI_Real_Estate_Agent.pptx) — reproducible deck generator (python-pptx). The `.pptx` is committed so graders don't need to run the script.
+  - [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md) — pre-push safety script: verify `.env` ignored + untracked, grep for secrets, rebuild, retest.
+
+Final submission state:
+- **All 14 steps complete.** Working LLM → ML → LLM chain, served by FastAPI, consumed by a React/Vite UI, packaged with Docker Compose, covered by `pytest`, with a versioned prompt benchmark and a reproducible deck.
+- **Routes:** `GET /health`, `POST /extract` (Stage 1 + completeness metadata), `POST /predict` (either raw query or user-reviewed features → full pipeline).
+- **Two-phase UI flow:** user types description → `/extract` shows what the LLM understood + which fields are missing → user reviews/fills gaps → `/predict` reveals price + grounded interpretation. This satisfies the brief's "UI lets the user review and fill gaps before prediction runs" requirement.
+- **Tests:** 10 passed. `pytest -q` runs in ~13s, no API key needed.
+- **Docker:** `docker compose up --build` brings up backend (`:8000`) + frontend (`:3000`). Backend image built offline from `wheels/`; frontend image serves the prebuilt `dist/` via a zero-dep Node proxy.
+- **Artifacts on disk:** `models/model.joblib`, `models/training_stats.json`, `prompt_logs/comparison.json`, `data/train.csv`, `notebooks/eda_and_training.ipynb` — all committed so a grader can rebuild, retest, or rerun without any external fetch.
+
+GitHub safety notes:
+- `.env` is gitignored (`.gitignore:21`) and verified **not tracked** (`git ls-files .env` returns nothing). The real `OPENAI_API_KEY` only exists on disk in `.env`, never in source, commits, or history.
+- `.env.example` contains placeholder values only — committed as documentation.
+- No `sk-` prefixed strings appear anywhere in tracked files or `git log -p`.
+- The backend image excludes `.env` via `.dockerignore` and receives the key at runtime through `docker-compose.yml`'s `env_file: .env`. Images carry zero secrets.
+- `wheels/` (91 MB of Linux wheels for the Docker offline install) is gitignored but kept locally — regenerate with `pip download -r requirements.txt -d wheels/ --platform manylinux2014_x86_64 --python-version 3.11 --only-binary=:all:` if needed.
+
+Repo organization (final):
+- Root: `README.md`, `CLAUDE.md`, `PUBLISH_CHECKLIST.md`, `Dockerfile`, `docker-compose.yml`, `requirements*.txt`, `.env.example`, `.gitignore`, `.dockerignore`, presentation files + `make_deck.py` + `.pptx`.
+- `app/` — FastAPI backend (`main.py`, `chain/`, `ml/`, `prompts/`, `schemas/`, `utils/`).
+- `frontend/` — React/Vite app + `dist/` build + `Dockerfile` + `serve.cjs`.
+- `models/`, `data/`, `notebooks/`, `prompt_logs/` — artifacts and deliverables.
+- `tests/` — pytest suite.
+- Cleaned up on final pass: removed `.pytest_cache/`, `.tmp-pip/`, `__pycache__/`, and the empty legacy `ui/` directory (replaced by `frontend/` back in Step 11).

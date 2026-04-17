@@ -41,7 +41,7 @@ TOTAL_MODEL_FEATURES = len(ExtractedFeatures.model_fields)
 class ExtractionResponse(BaseModel):
     """Stage-1 output plus completeness metadata for the review step."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", protected_namespaces=())
 
     query: str = Field(
         ...,
@@ -100,7 +100,7 @@ class ExtractionResponse(BaseModel):
 class PredictionResponse(BaseModel):
     """Full pipeline output returned by ``POST /predict``."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", protected_namespaces=())
 
     query: str = Field(
         ...,
