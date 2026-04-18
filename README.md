@@ -170,10 +170,7 @@ The suite covers:
 
 - Notebook: `notebooks/eda_and_training.ipynb`
 - Prompt benchmark log: `prompt_logs/comparison.json`
-- Speaker notes: `presentation_speaker_notes.md`
-- Presentation outline: `presentation_outline.md`
-- Q&A prep: `presentation_qa.md`
-- Slide deck generator: `make_deck.py`
+- Slide deck: `Real_Estate_Pricing_Intelligence_v2.pptx`
 
 ## Safety Notes
 

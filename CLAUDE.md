@@ -279,8 +279,7 @@ Key design decision (Step 13):
 
 - Step 14 results:
   - [README.md](README.md) — architecture diagram, demo flow, project structure, compliance highlights, local + Docker run instructions, API route examples (including the `POST /extract` → review → `POST /predict` flow), and safety notes pointing at `PUBLISH_CHECKLIST.md`.
-  - [presentation_outline.md](presentation_outline.md), [presentation_speaker_notes.md](presentation_speaker_notes.md), [presentation_qa.md](presentation_qa.md) — Friday talking points: problem → architecture → demo → lessons, plus anticipated review questions with answers.
-  - [make_deck.py](make_deck.py) → [AI_Real_Estate_Agent.pptx](AI_Real_Estate_Agent.pptx) — reproducible deck generator (python-pptx). The `.pptx` is committed so graders don't need to run the script.
+  - [Real_Estate_Pricing_Intelligence_v2.pptx](Real_Estate_Pricing_Intelligence_v2.pptx) — final editorial deck used in the Friday review.
   - [PUBLISH_CHECKLIST.md](PUBLISH_CHECKLIST.md) — pre-push safety script: verify `.env` ignored + untracked, grep for secrets, rebuild, retest.
 
 Final submission state:
@@ -299,9 +298,9 @@ GitHub safety notes:
 - `wheels/` (91 MB of Linux wheels for the Docker offline install) is gitignored but kept locally — regenerate with `pip download -r requirements.txt -d wheels/ --platform manylinux2014_x86_64 --python-version 3.11 --only-binary=:all:` if needed.
 
 Repo organization (final):
-- Root: `README.md`, `CLAUDE.md`, `PUBLISH_CHECKLIST.md`, `Dockerfile`, `docker-compose.yml`, `requirements*.txt`, `.env.example`, `.gitignore`, `.dockerignore`, presentation files + `make_deck.py` + `.pptx`.
+- Root: `README.md`, `CLAUDE.md`, `PUBLISH_CHECKLIST.md`, `Dockerfile`, `docker-compose.yml`, `requirements*.txt`, `.env.example`, `.gitignore`, `.dockerignore`, `Real_Estate_Pricing_Intelligence_v2.pptx`, `render.yaml`.
 - `app/` — FastAPI backend (`main.py`, `chain/`, `ml/`, `prompts/`, `schemas/`, `utils/`).
 - `frontend/` — React/Vite app + `dist/` build + `Dockerfile` + `serve.cjs`.
 - `models/`, `data/`, `notebooks/`, `prompt_logs/` — artifacts and deliverables.
 - `tests/` — pytest suite.
-- Cleaned up on final pass: removed `.pytest_cache/`, `.tmp-pip/`, `__pycache__/`, and the empty legacy `ui/` directory (replaced by `frontend/` back in Step 11).
+- Final cleanup (2026-04-18): removed the old `AI_Real_Estate_Agent.pptx` + `make_deck.py` + `presentation_*.md` drafts, dropped the `Real_Estate_Pricing_Intelligence.pptx` v1 and unrelated scratch (`cheatsheet.tex`, `make_hanan_deck.py`). Only `Real_Estate_Pricing_Intelligence_v2.pptx` remains as the canonical deck. `.claude/` is now gitignored alongside `.pytest_cache/`.

@@ -53,3 +53,6 @@ wheels/
 
 # Node (belt-and-suspenders, frontend/.gitignore already handles this)
 node_modules/
+
+# Claude Code ephemeral state
+.claude/
