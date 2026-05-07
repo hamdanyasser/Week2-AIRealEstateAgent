@@ -49,7 +49,10 @@ def get_client() -> OpenAI:
     from the environment exactly once per process.
     """
     settings = get_settings()
-    return OpenAI(api_key=settings.openai_api_key)
+    kwargs: dict = {"api_key": settings.openai_api_key}
+    if settings.openai_base_url:
+        kwargs["base_url"] = settings.openai_base_url
+    return OpenAI(**kwargs)
 
 
 def extract_features(

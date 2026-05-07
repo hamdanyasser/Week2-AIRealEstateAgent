@@ -25,9 +25,17 @@ class Settings(BaseSettings):
     """
 
     openai_api_key: str = Field(..., description="OpenAI API key.")
+    openai_base_url: str | None = Field(
+        default=None,
+        description=(
+            "Optional custom base URL for OpenAI-compatible providers "
+            "(e.g. Groq: https://api.groq.com/openai/v1). Leave unset "
+            "to use the default OpenAI endpoint."
+        ),
+    )
     model_name: str = Field(
         default="gpt-4o-mini",
-        description="OpenAI model used for LLM calls.",
+        description="Chat model name used for LLM calls.",
     )
 
     model_config = SettingsConfigDict(
