@@ -1,93 +1,110 @@
 # AI Real Estate Agent
 
-Week 2 project for the SE Factory AIE Bootcamp.
+A natural-language sale-price estimator for the Ames Housing dataset. The user types a free-text description ("3-bed ranch in OldTown, decent shape, 2-car garage"), an LLM extracts structured features, a scikit-learn model predicts the sale price, and a second LLM call interprets the result against training-set statistics.
 
-This app predicts an Ames Housing sale price from a plain-English property description. The system uses a two-stage LLM chain around a supervised sklearn model:
+**Live demo:** https://ai-real-estate-web.onrender.com (free-tier backend cold-starts; first request may take ~30s)
 
-1. Stage 1 extracts structured housing features from the user's query.
-2. The sklearn pipeline predicts the sale price.
-3. Stage 2 explains the prediction in plain English using training-set statistics.
+## Why this exists
 
-The UI is intentionally narrative. The user writes a description, reviews the extracted features, fills any important missing values, and only then runs the prediction.
+Ames Housing is a classic regression dataset, but the standard form-based interface to a price model — fill in 80 columns, click Submit — is hostile to anyone who doesn't already think in feature names. This project tests whether an LLM can bridge the gap: take ambiguous human language, extract just the columns the model needs, and produce a number a non-technical user can trust.
 
-## Demo Flow
-
-1. Enter a free-text description such as `3 bedroom ranch in OldTown, built 1960, 1-car garage`.
-2. The app runs Stage 1 only and shows the extracted 12 model features.
-3. The user reviews any blanks and can fill missing values before pricing.
-4. The reviewed feature set is sent to the model.
-5. The app reveals the price and a grounded interpretation.
+The interesting part isn't the regression (sklearn does the obvious thing). It's the two failure modes around it: an LLM that may hallucinate or omit features, and a price prediction that means nothing without context. The app addresses both — Pydantic validation + safe fallbacks for the first, training-stats-grounded interpretation for the second — and shows its work to the user so they can correct any misreadings before the price is computed.
 
 ## Architecture
 
 ```text
-user query
-  -> Stage 1 LLM extraction
-  -> ExtractionResponse (features + completeness metadata)
-  -> user review / fill missing values
-  -> sklearn Pipeline prediction
-  -> Stage 2 LLM interpretation
-  -> PredictionResponse
-  -> FastAPI
-  -> React/Vite frontend
+user query (free text)
+  │
+  ▼
+Stage 1 — LLM extraction (OpenAI-compatible, JSON mode)
+  → ExtractedFeatures (Pydantic, all fields Optional)
+  │
+  ▼
+optional user review (UI pause)
+  → user fills missing or wrong values
+  │
+  ▼
+sklearn Pipeline prediction
+  → ColumnTransformer (impute + scale + one-hot) → RandomForestRegressor
+  → predicted_price : float
+  │
+  ▼
+Stage 2 — LLM interpretation (grounded in training stats)
+  → plain-English explanation
+  │
+  ▼
+PredictionResponse (Pydantic) → FastAPI → React frontend
 ```
 
-## Project Structure
+## Key design choices
+
+1. **Two-stage LLM chain, not one.** Stage 1 is mechanical (parse text → JSON), Stage 2 is interpretive (explain a number). Splitting them lets each prompt stay short and focused, and it puts the deterministic sklearn model in the middle where the actual price is decided. The LLM never picks the price.
+2. **The pipeline owns the defaults.** When the LLM omits features, the saved sklearn `Pipeline`'s own fitted `SimpleImputer` fills them with training medians/modes. There is no second copy of "what to fill in" living anywhere else, so there is no chance of training/serving skew.
+3. **Lenient on input, strict on output.** `ExtractedFeatures` accepts partials and ignores stray LLM keys (`extra="ignore"`). `PredictionResponse` rejects extras (`extra="forbid"`) — that's the app's own contract, and any drift there is a real bug.
+4. **Stage 2 is grounded.** The interpretation prompt receives the predicted price plus the training median, quartiles, and the per-neighborhood average. Without that grounding, GPT would reference its pretraining knowledge of real estate generally — which has nothing to do with the specific Ames training set this model was fitted on.
+5. **Two-phase UI flow.** The frontend calls `/extract` first, shows what the LLM understood, lets the user fix anything, and only then calls `/predict`. This keeps silent extraction errors from propagating into the final number.
+6. **Pluggable LLM provider.** The OpenAI client honours an optional `OPENAI_BASE_URL`, so the same code works against OpenAI, Groq, or any OpenAI-compatible endpoint with a single env var swap.
+
+## Tech stack
+
+| Layer | Library | Pinned version |
+|---|---|---|
+| Backend | FastAPI + uvicorn | 0.115.0 / 0.30.6 |
+| ML | scikit-learn, pandas, numpy, joblib | 1.5.2 / 2.2.3 / 2.1.1 / 1.4.2 |
+| LLM | openai (`gpt-4o-mini` default) | 1.51.0 |
+| Schemas | Pydantic v2 + pydantic-settings | 2.9.2 / 2.5.2 |
+| UI | React + Vite + Tailwind + Framer Motion | 18.3.1 / 5.4.8 / 3.4.13 / 11.11.1 |
+| Deploy | Docker + docker-compose | — |
+| Data | Kaggle "House Prices — Advanced Regression Techniques" (Ames) | — |
+
+Python 3.11.
+
+## Project structure
 
 ```text
 app/
-  chain/        Stage 1 and Stage 2 orchestration
-  ml/           sklearn training, stats, and inference
-  prompts/      extraction and interpretation prompts
-  schemas/      Pydantic contracts
-  utils/        logging helpers
+  chain/        Stage 1 + Stage 2 orchestration with safe fallbacks
+  ml/           sklearn training, training stats, and inference
+  prompts/      v1 / v2 extraction prompts and the interpretation prompt
+  schemas/      Pydantic contracts (input lenient, output strict)
+  utils/        logging
+  main.py       FastAPI app (lifespan-loaded model + stats)
 frontend/
-  src/          React UI
+  src/          React UI (idle → thinking → result state machine)
+  dist/         prebuilt bundle for Docker
 models/
   model.joblib
   training_stats.json
 prompt_logs/
-  comparison.json
+  comparison.json   v1 vs v2 benchmark output (5 labeled cases)
 notebooks/
   eda_and_training.ipynb
 tests/
-  pytest suite for schemas, chains, predictor, and API routes
+  pytest suite — schemas, predictor, mocked LLM fallbacks, route behaviour
 ```
 
-## Brief Compliance Highlights
+## API
 
-- ML pipeline with train/validation/test split and leakage-safe preprocessing
-- Stage 1 extraction with prompt versioning evidence in `prompt_logs/comparison.json`
-- Stage 2 interpretation grounded in training-set statistics
-- Pydantic validation, safe fallbacks, and HTTP error handling
-- UI flow that lets the user review or fill missing features before prediction runs
-- Docker setup for backend + frontend
-- Notebook, presentation support files, tests, and serialized artifacts included
+| Route | Purpose |
+|---|---|
+| `GET /health` | Liveness probe |
+| `POST /extract` | Stage 1 only — returns extracted features + completeness metadata |
+| `POST /predict` | Full pipeline — accepts a raw query, or user-reviewed features |
 
-## Main Routes
-
-- `GET /health`
-- `POST /extract`
-- `POST /predict`
-
-`POST /extract` returns the Stage 1 output plus completeness metadata:
+`POST /extract` example:
 
 ```json
 {
   "query": "3 bedroom ranch in OldTown",
   "prompt_version": "v2",
-  "extracted_features": {
-    "BedroomAbvGr": 3,
-    "Neighborhood": "OldTown"
-  },
-  "present_features": ["BedroomAbvGr", "Neighborhood"],
+  "extracted_features": { "BedroomAbvGr": 3, "Neighborhood": "OldTown" },
   "missing_features": ["GrLivArea", "TotalBsmtSF", "..."],
   "completeness_ratio": 0.167,
   "is_complete": false
 }
 ```
 
-`POST /predict` accepts either the raw query alone or a reviewed feature payload:
+`POST /predict` accepts either a raw query (Stage 1 runs) or pre-reviewed features (Stage 1 skipped):
 
 ```json
 {
@@ -100,35 +117,30 @@ tests/
 }
 ```
 
-## Local Setup
+## Local setup
 
-### 1. Create the environment file
+### 1. Environment file
 
 ```bash
-copy .env.example .env
+cp .env.example .env
 ```
 
-Fill in `OPENAI_API_KEY` inside `.env`. Never commit that file.
+Fill `OPENAI_API_KEY` (and optionally `OPENAI_BASE_URL` + `MODEL_NAME` if pointing at a non-OpenAI provider — see `.env.example`).
 
-### 2. Install Python dependencies
+### 2. Backend
 
 ```bash
 python -m pip install -r requirements.txt -r requirements-dev.txt
-```
-
-### 3. Run the backend
-
-```bash
 uvicorn app.main:app --reload
 ```
 
-Backend health check:
+Health check:
 
 ```bash
 curl http://localhost:8000/health
 ```
 
-### 4. Run the frontend
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -136,45 +148,31 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:5173`. The Vite dev server proxies `/extract`, `/predict`, and `/health` to the backend on `:8000`.
 
 ## Docker
-
-Run the full stack:
 
 ```bash
 docker compose up --build
 ```
 
-Expected ports:
-
-- backend: `http://localhost:8000`
-- frontend: `http://localhost:3000`
+- Backend: `http://localhost:8000`
+- Frontend: `http://localhost:3000`
 
 ## Tests
-
-Run the backend tests:
 
 ```bash
 pytest -q
 ```
 
-The suite covers:
+10 tests, runs in ~3 seconds. Covers schema validation, predictor dataframe shaping and inference, mocked LLM failure paths (malformed JSON, validation error, API error), and the FastAPI route behaviour. No API key required.
 
-- schema validation and completeness metadata
-- predictor dataframe shaping and inference
-- mocked Stage 1 / Stage 2 failure handling
-- `/extract` and `/predict` route behavior
+## Safety notes
 
-## Notebook and Presentation Files
+- `.env` is gitignored. `.env.example` ships placeholder values only.
+- No real key belongs in source, markdown, notebooks, or commits.
+- See `PUBLISH_CHECKLIST.md` for a pre-push secret-scanning routine.
 
-- Notebook: `notebooks/eda_and_training.ipynb`
-- Prompt benchmark log: `prompt_logs/comparison.json`
-- Slide deck: `Real_Estate_Pricing_Intelligence_v2.pptx`
+## License
 
-## Safety Notes
-
-- `.env` is gitignored and must stay local.
-- `.env.example` contains placeholders only.
-- No real secret belongs in markdown, notebooks, or source files.
-- Run the checks in `PUBLISH_CHECKLIST.md` before your first push.
+MIT — see `LICENSE` if present, otherwise treat as MIT.

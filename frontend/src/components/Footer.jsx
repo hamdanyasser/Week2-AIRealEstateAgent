@@ -11,10 +11,6 @@ export default function Footer() {
         </div>
 
         <div className="text-[11px] uppercase tracking-eyebrow text-muted">
-          SE Factory · AIE Bootcamp · Week 2
-        </div>
-
-        <div className="text-[11px] uppercase tracking-eyebrow text-muted">
           FastAPI · scikit-learn · GPT-4o-mini
         </div>
       </div>

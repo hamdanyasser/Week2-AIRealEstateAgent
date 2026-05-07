@@ -61,7 +61,7 @@ git ls-files
 ```bash
 git add .
 git status
-git commit -m "feat(app): finalize week 2 real estate agent submission"
+git commit -m "feat(app): initial commit — natural-language real estate price estimator"
 git branch -M main
 git remote add origin <YOUR_GITHUB_REPO_URL>
 git push -u origin main

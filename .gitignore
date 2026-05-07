@@ -56,3 +56,4 @@ node_modules/
 
 # Claude Code ephemeral state
 .claude/
+CLAUDE.md
